@@ -1,5 +1,6 @@
 import { MODULE_BY_KEY } from '@/data/modules'
-import { allRows, listRows, resetRows, saveRows } from '@/data/local-store'
+import { mutate, allRows, listRows, resetRows, saveRows } from '@/data/local-store'
+import { SEED_EXECUTIONS, SEED_REMINDERS, SEED_ROWS } from '@/data/seed'
 import type { ActionResult, EntryRow, ModuleMeta, OverviewResult, PageResult } from '@/data/types'
 
 // 会写进数据的「往回走」动作：命中就把这条记录标成异常态，看板上能一眼看出来。
@@ -57,7 +58,16 @@ export function runAction(key: string, id: number, action: string): ActionResult
 }
 
 export function resetModule(key: string): PageResult {
-  resetRows(key)
+  if (key === 'burnpermit') {
+    // 焚烧审批的提醒和执行会话要一起回到播种数据，避免重置后残留关联。
+    mutate((draft) => {
+      draft.entries[key] = JSON.parse(JSON.stringify(SEED_ROWS[key] ?? []))
+      draft.reminders = JSON.parse(JSON.stringify(SEED_REMINDERS))
+      draft.executions = JSON.parse(JSON.stringify(SEED_EXECUTIONS))
+    })
+  } else {
+    resetRows(key)
+  }
   return listEntries(key)
 }
 
