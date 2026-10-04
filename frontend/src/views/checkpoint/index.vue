@@ -24,6 +24,33 @@
       </span>
     </p>
 
+    <section class="reminder-panel">
+      <h3 class="panel-title">用火通行提醒（与焚烧审批同一取数链路，按审批单幂等）</h3>
+      <p v-if="!reminders.length" class="empty-state">暂无用火通行提醒；焚烧审批批准或执行后会同步到这里</p>
+      <table v-else class="data-table reminder-table">
+        <thead>
+          <tr>
+            <th>审批编号</th>
+            <th>用火地点</th>
+            <th>计划时段</th>
+            <th>需核验安全措施</th>
+            <th>提醒状态</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in reminders" :key="item.permitId">
+            <td>{{ item.审批编号 }}</td>
+            <td>{{ item.用火地点 }}</td>
+            <td>{{ item.计划时段 }}</td>
+            <td>{{ item.安全措施 || '已核销' }}</td>
+            <td>
+              <span :class="item.kind === '待确认' ? 'cell-warn' : 'ok-text'">{{ item.提醒状态 }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
     <form class="filter-bar" @submit.prevent="reload">
       <label v-for="field in filterFields" :key="field" class="filter-item">
         <span>{{ field }}</span>
@@ -77,9 +104,10 @@ import {
   downloadEntries,
   listEntries,
   moduleMeta,
+  passageReminders,
   runAction as applyAction,
 } from '@/api/local-service'
-import type { EntryRow } from '@/data/types'
+import type { EntryRow, PassageReminder } from '@/data/types'
 
 const meta = moduleMeta('checkpoint')
 const columns = ["站点编号", "站点位置", "值守人员", "检查项目", "通行车辆数", "收缴火种数", "值班日期", "运行状态"]
@@ -90,6 +118,7 @@ const stats = [{"label": "站点总数", "value": 0}, {"label": "正常检查数
 const rows = ref<EntryRow[]>([])
 const total = ref(0)
 const errorMessage = ref('')
+const reminders = ref<PassageReminder[]>([])
 const filters = ref<Record<string, string>>({})
 const filterFields = columns.slice(0, 3)
 const statusSummary = computed(() =>
@@ -128,6 +157,7 @@ function reload() {
     const payload = listEntries(meta.key, filters.value)
     rows.value = payload.items
     total.value = payload.total
+    reminders.value = passageReminders()
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : '防火检查站列表读取失败'
   }

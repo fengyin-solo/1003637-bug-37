@@ -725,7 +725,7 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
       "id": 2,
       "status": "待审批",
       "pending": true,
-      "abnormal": true,
+      "abnormal": false,
       "审批编号": "BURN-0002",
       "申请单位": "焚烧审批样例2",
       "用火类型": "焚烧审批样例2",
@@ -738,7 +738,7 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "已批准",
-      "pending": false,
+      "pending": true,
       "abnormal": false,
       "审批编号": "BURN-0003",
       "申请单位": "焚烧审批样例3",
@@ -748,6 +748,33 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
       "安全措施": "焚烧审批样例3",
       "审批人": "焚烧审批样例3",
       "审批状态": "焚烧审批样例3"
+    },
+    {
+      "id": 4,
+      "status": "已批准",
+      "pending": true,
+      "abnormal": false,
+      "审批编号": "BURN-2025-0117",
+      "申请单位": "青松林场一队",
+      "用火类型": "计划烧除",
+      "用火地点": "北坡三号沟",
+      "计划时段": "2025-11-18 09:00-11:30",
+      "安全措施": "现场监护2人、配备风力灭火机1台、开设宽10米防火线",
+      "审批状态": "历史迁移数据"
+    },
+    {
+      "id": 5,
+      "status": "待审批",
+      "pending": true,
+      "abnormal": true,
+      "审批编号": "BURN-2026-0006",
+      "申请单位": "红松岭承包组",
+      "用火类型": "烧荒",
+      "用火地点": "",
+      "计划时段": "2026-10-06",
+      "安全措施": "",
+      "审批人": "",
+      "审批状态": "纸质单转录入库"
     }
   ],
   "treegrowth": [
